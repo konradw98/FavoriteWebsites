@@ -31,7 +31,8 @@ public class MainActivity extends AppCompatActivity {
         String strUrl=urlEditText.getText().toString();
         Log.i("STR",strTitle);
         Log.i("URL",strUrl);
-        websitesDB.execSQL("INSERT INTO websites2 (title,url) VALUES ("+strTitle+","+strUrl+")");
+        websitesDB.execSQL("INSERT INTO websites2 (title,url) VALUES ('po klinkieciu','po kliknieciu')");
+        websitesDB.execSQL("INSERT INTO websites2 (title,url) VALUES ('"+strTitle+"','"+strUrl+"')");
         updateListView();
 
     }
@@ -64,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
 
         websitesDB=this.openOrCreateDatabase("websites",MODE_PRIVATE,null);
         websitesDB.execSQL("CREATE TABLE IF NOT EXISTS websites2 (title VARCHAR, url VARCHAR)");
+        websitesDB.execSQL("INSERT INTO websites2 (title,url) VALUES ('przed kliknieciem','przed kliknieciem')");
+        websitesDB.execSQL("INSERT INTO websites2 (title,url) VALUES ('github','https://github.com/konradw98')");
+
+
 
 
 
