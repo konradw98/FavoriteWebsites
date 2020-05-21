@@ -1,7 +1,9 @@
 package com.example.favoritewebsites;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,13 +34,12 @@ public class MainActivity extends AppCompatActivity {
         String strUrl=urlEditText.getText().toString();
         Log.i("STR",strTitle);
         Log.i("URL",strUrl);
-        websitesDB.execSQL("INSERT INTO websites2 (title,url) VALUES ('po klinkieciu','po kliknieciu')");
+
         websitesDB.execSQL("INSERT INTO websites2 (title,url) VALUES ('"+strTitle+"','"+strUrl+"')");
         updateListView();
 
     }
-    //https://github.com/konradw98
-// updejtujac to trzeba zaktualizaowac obydwie tablice stringow tutaj pobierajc to z bazy danych
+
     public void updateListView() {
         titles.clear();
         urls.clear();
@@ -65,20 +67,11 @@ public class MainActivity extends AppCompatActivity {
 
         websitesDB=this.openOrCreateDatabase("websites",MODE_PRIVATE,null);
         websitesDB.execSQL("CREATE TABLE IF NOT EXISTS websites2 (title VARCHAR, url VARCHAR)");
-        websitesDB.execSQL("INSERT INTO websites2 (title,url) VALUES ('przed kliknieciem','przed kliknieciem')");
-        websitesDB.execSQL("INSERT INTO websites2 (title,url) VALUES ('github','https://github.com/konradw98')");
-
-
-
 
 
         titleEditText=findViewById(R.id.titleEditText);
         urlEditText=findViewById(R.id.urlEditText);
         addButton=findViewById(R.id.addButton);
-
-
-
-
 
         ListView listView= findViewById(R.id.listView);
 
@@ -91,6 +84,24 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), WebsiteActivity.class);
                 intent.putExtra("urlId",position);
                 startActivity(intent);
+            }
+        });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final int itemToDelete= position;
+                new AlertDialog.Builder(MainActivity.this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Are you sure?")
+                        .setMessage("Do you want to delete this website?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                websitesDB.execSQL("DELETE FROM websites2 WHERE title='"+titles.get(itemToDelete)+"'");
+                               updateListView();
+                            }
+                        }).setNegativeButton("No", null).show();
+                return true;
             }
         });
 
